@@ -483,26 +483,4 @@ if 'analyzer' in st.session_state:
 
 else:
     st.info("👈 Configure the parameters in the sidebar and click 'Run Depth Analysis' to start.")
-    st.markdown("""
-    ### 🎯 How This Market Depth Model Works
-    
-    This integrated system combines key features from professional market depth analysis projects:
-    
-    1.  **L2/L3 Depth Simulation**: Generates realistic order book data with bid-ask spreads, depth levels, and size clustering.
-    2.  **Spread Modeling**: Supports multiple spread models (volatility-linked, volume-sensitive, time-of-day).
-    3.  **Order Book Analytics**: Calculates depth imbalance, liquidity at key levels, and wall detection.
-    4.  **Market Impact Simulation**: Simulates execution costs for large orders using order book analysis.
-    5.  **Professional Visualizations**: Displays L2 depth charts, spread trends, and trade activity.
-    
-    ### 🔧 Technologies Used
-    
-    - **Streamlit** for the interactive dashboard
-    - **Plotly** for professional charts and depth visualizations
-    - **conflux-depthsim** (optional) for professional market depth simulation
-    - **yfinance** for real market data
-    - **Pandas/NumPy** for data processing and analytics
-    
-    ### 📦 Installation
-    
-    ```bash
-    pip install streamlit yfinance pandas numpy plotly
+
