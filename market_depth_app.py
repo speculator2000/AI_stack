@@ -7,7 +7,19 @@ market depth analysis systems (bybit-depth, DepthSim, and HFT research).
 
 IMPORTANT: This is a simulation for educational purposes. It demonstrates
 the core concepts of market depth analysis without connecting to live exchanges.
+
+Target runtime: Python 3.13.x
+See requirements.txt for versions verified against Python 3.13.
 """
+
+import sys
+
+if sys.version_info < (3, 13):
+    raise RuntimeError(
+        f"This app targets Python 3.13.x. Detected {sys.version.split()[0]}. "
+        "Create a fresh virtualenv with Python 3.13 (e.g. `python3.13 -m venv .venv`) "
+        "and reinstall dependencies from requirements.txt."
+    )
 
 import streamlit as st
 import pandas as pd
@@ -116,7 +128,7 @@ class MarketDepthAnalyzer:
             if i + 1 >= len(self.data):
                 break
                 
-            mid = self.data['Close'].iloc[i]
+            mid = float(self.data['Close'].iloc[i])
             spread = 4 + 8 * np.random.rand()
             
             # Generate bid levels (prices decreasing from mid)
@@ -157,7 +169,7 @@ class MarketDepthAnalyzer:
             if ts not in self.data.index:
                 continue
             idx = self.data.index.get_loc(ts)
-            price = self.data['Close'].iloc[idx]
+            price = float(self.data['Close'].iloc[idx])
             size = 100 + 900 * np.random.rand()
             side = 'buy' if np.random.rand() > 0.4 else 'sell'
             trades.append({
@@ -273,10 +285,18 @@ def fetch_and_process_data(ticker, period):
     end_date = datetime.now()
     start_date = end_date - timedelta(days=period)
     data = yf.download(ticker, start=start_date, end=end_date, progress=False)
-    
+
     if data.empty:
         return None
-    
+
+    # Newer yfinance versions can return MultiIndex columns (Price, Ticker)
+    # even for a single-ticker download. Flatten to keep plain column
+    # lookups like data['Close'] working, and to prevent scalar operations
+    # elsewhere (e.g. float(self.data['Close'].iloc[i])) from silently
+    # receiving a 1-element Series instead of a float.
+    if isinstance(data.columns, pd.MultiIndex):
+        data.columns = data.columns.get_level_values(0)
+
     data = data.dropna()
     return data
 
@@ -483,4 +503,3 @@ if 'analyzer' in st.session_state:
 
 else:
     st.info("👈 Configure the parameters in the sidebar and click 'Run Depth Analysis' to start.")
-
