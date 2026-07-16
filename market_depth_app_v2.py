@@ -32,7 +32,7 @@ if sys.version_info < (3, 13):
 import streamlit as st
 import pandas as pd
 import numpy as np
-from plotly import plotly.graph_objects as go
+from plotly import graph_objects as go #plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from datetime import datetime, timedelta
 import yfinance as yf
