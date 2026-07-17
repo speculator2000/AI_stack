@@ -15,7 +15,18 @@ A comprehensive risk management system for trading portfolios featuring:
 - Scenario analysis
 
 IMPORTANT: This is a comprehensive simulation for educational and professional use.
+
+Target runtime: Python 3.13.x
 """
+
+import sys
+
+if sys.version_info < (3, 13):
+    raise RuntimeError(
+        f"This app targets Python 3.13.x. Detected {sys.version.split()[0]}. "
+        "Create a fresh virtualenv with Python 3.13 (e.g. `python3.13 -m venv .venv`) "
+        "and reinstall dependencies from requirements.txt."
+    )
 
 import streamlit as st
 
@@ -72,6 +83,29 @@ st.title("🛡️ Risk Management Model")
 st.markdown("**Comprehensive portfolio risk analysis with VaR, CVaR, Monte Carlo, and stress testing**")
 
 
+def _clean_close_series(df, label):
+    """
+    Return a guaranteed 1-D pd.Series of Close prices from a yfinance
+    download result, regardless of whether yfinance returned single-level
+    or MultiIndex (Price, Ticker) columns for this particular ticker/version.
+
+    Without this normalization, a dict of mixed scalar/odd-shaped values
+    passed to pd.DataFrame(...) can raise:
+    "ValueError: If using all scalar values, you must pass an index"
+    """
+    if isinstance(df.columns, pd.MultiIndex):
+        df = df.copy()
+        df.columns = df.columns.get_level_values(0)
+
+    close = df['Close']
+    if isinstance(close, pd.DataFrame):
+        # Single-column DataFrame (e.g. leftover Ticker level) -> squeeze to Series
+        close = close.iloc[:, 0]
+    close = close.dropna()
+    close.name = label
+    return close
+
+
 # --- 2. Core Risk Management Engine ---
 class RiskManager:
     """Comprehensive risk management engine with advanced analytics."""
@@ -97,9 +131,15 @@ class RiskManager:
         for ticker in self.tickers:
             try:
                 df = yf.download(ticker, start=start_date, end=end_date, progress=False)
-                if not df.empty:
-                    data[ticker] = df['Close']
-            except:
+                if df.empty:
+                    continue
+
+                close = _clean_close_series(df, ticker)
+                if close.empty:
+                    continue
+
+                data[ticker] = close
+            except Exception:
                 st.warning(f"Could not fetch data for {ticker}")
 
         if not data:
@@ -338,7 +378,8 @@ class RiskManager:
 
         try:
             market_data = yf.download(market_ticker, start=self.data.index[0], end=datetime.now(), progress=False)
-            market_returns = market_data['Close'].pct_change().dropna()
+            market_close = _clean_close_series(market_data, market_ticker)
+            market_returns = market_close.pct_change().dropna()
 
             # Align dates
             common_dates = self.returns.index.intersection(market_returns.index)
@@ -350,7 +391,7 @@ class RiskManager:
             beta = covariance / variance if variance > 0 else 1
 
             return beta
-        except:
+        except Exception:
             return 1
 
     def calculate_risk_contribution(self):
@@ -755,7 +796,8 @@ if 'risk_manager' in st.session_state:
 
         # Row 9: Data Table
         with st.expander("📋 Historical Data"):
-            st.dataframe(data.tail(20).style.format("{:.2f}"))
+            numeric_cols = data.select_dtypes(include=[np.number]).columns
+            st.dataframe(data.tail(20).style.format("{:.2f}", subset=numeric_cols))
 
 else:
     st.info("👈 Configure the portfolio parameters in the sidebar and click 'Run Risk Analysis' to start.")
