@@ -543,12 +543,12 @@ if 'risk_manager' in st.session_state:
 
     st.subheader(f"📊 Portfolio Risk Analysis")
 
-    # Display weights
+    # Display weights - Fixed: Convert numpy array to list
     st.write(f"**Portfolio Weights:**")
     weight_df = pd.DataFrame({
         'Ticker': tickers,
-        'Weight': weights
-    }, index=range(len(tickers)))
+        'Weight': list(weights)  # Convert numpy array to list
+    })
     weight_df['Weight %'] = (weight_df['Weight'] * 100).round(2)
     st.dataframe(weight_df[['Ticker', 'Weight %']], hide_index=True)
 
