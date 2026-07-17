@@ -548,7 +548,7 @@ if 'risk_manager' in st.session_state:
     weight_df = pd.DataFrame({
         'Ticker': tickers,
         'Weight': weights
-    })
+    }, index=range(len(tickers)))
     weight_df['Weight %'] = (weight_df['Weight'] * 100).round(2)
     st.dataframe(weight_df[['Ticker', 'Weight %']], hide_index=True)
 
