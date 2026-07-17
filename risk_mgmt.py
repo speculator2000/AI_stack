@@ -476,9 +476,12 @@ class RiskManager:
             portfolio_returns = simulated_returns @ self.weights
 
             # Calculate path
+            # path is a plain NumPy array (portfolio_returns comes from a
+            # NumPy matrix multiply, simulated_returns @ self.weights), so
+            # it must be indexed with [-1], not pandas' .iloc[-1].
             path = initial_value * (1 + portfolio_returns).cumprod()
             paths.append(path)
-            final_values.append(path.iloc[-1])
+            final_values.append(path[-1])
 
         # Calculate percentiles
         final_values = np.array(final_values)
