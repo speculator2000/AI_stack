@@ -91,20 +91,20 @@ st.set_page_config(page_title="Risk Management Model", page_icon="🛡️", layo
 # =============================================================================
 
 PALETTE = {
-    "ink": "#0E1A2B",        # near-black navy — sidebar, headings
-    "ink_2": "#1B2F49",      # secondary ink surface
-    "paper": "#F7F4EC",      # warm ivory — page background
-    "paper_2": "#EFEADA",    # card / metric surface
-    "rule": "rgba(14,26,43,0.14)",   # hairline dividers
-    "text": "#1B2430",       # body text on paper
-    "muted": "#5B6472",      # secondary text
-    "paper_text": "#EEEAE0", # text on ink surfaces
-    "emerald": "#1F4D3D",    # primary accent — gains, confidence
-    "emerald_soft": "rgba(31,77,61,0.10)",
-    "gold": "#B08D57",       # secondary accent — highlights, rules
-    "gold_soft": "rgba(176,141,87,0.14)",
-    "burgundy": "#7A2E2E",   # risk / loss accent
-    "burgundy_soft": "rgba(122,46,46,0.10)",
+    "ink": "#2B3B50",        # soft slate navy — sidebar, headings (was near-black)
+    "ink_2": "#374B65",      # secondary ink surface
+    "paper": "#F6F4EE",      # warm ivory — page background
+    "paper_2": "#EFEBE0",    # card / metric surface
+    "rule": "rgba(43,59,80,0.10)",   # hairline dividers, quieter
+    "text": "#33404F",       # body text on paper — softened from near-black
+    "muted": "#697787",      # secondary text
+    "paper_text": "#D9D4C7", # text on ink surfaces — softened from bright ivory
+    "emerald": "#33604F",    # primary accent — gains, confidence
+    "emerald_soft": "rgba(51,96,79,0.08)",
+    "gold": "#B0925F",       # secondary accent — highlights, rules
+    "gold_soft": "rgba(176,146,95,0.12)",
+    "burgundy": "#8A4A4A",   # risk / loss accent
+    "burgundy_soft": "rgba(138,74,74,0.08)",
 }
 
 PLOTLY_COLORWAY = [
@@ -126,56 +126,65 @@ def inject_design_system():
         .stApp {{
             background: {PALETTE["paper"]};
             color: {PALETTE["text"]};
+            font-size: 0.92rem;
+        }}
+
+        .block-container {{
+            padding-top: 1.6rem !important;
+            padding-bottom: 1.5rem !important;
+            max-width: 1300px;
         }}
 
         /* ---------- Typography ---------- */
         h1, h2, h3, h4 {{
             font-family: 'Fraunces', serif !important;
             color: {PALETTE["ink"]} !important;
-            font-weight: 600 !important;
+            font-weight: 500 !important;
             letter-spacing: -0.01em;
         }}
         h3 {{
             border-bottom: 1px solid {PALETTE["rule"]};
-            padding-bottom: 0.5rem;
-            margin-top: 2.2rem !important;
+            padding-bottom: 0.3rem;
+            margin-top: 1.1rem !important;
+            margin-bottom: 0.6rem !important;
+            font-size: 1.15rem !important;
         }}
         .eyebrow {{
             display: block;
             font-family: 'Inter', sans-serif;
-            font-size: 0.72rem;
+            font-size: 0.68rem;
             font-weight: 600;
-            letter-spacing: 0.16em;
+            letter-spacing: 0.13em;
             text-transform: uppercase;
             color: {PALETTE["gold"]};
-            margin-bottom: 0.15rem;
+            margin-bottom: 0.1rem;
         }}
 
         /* ---------- Masthead ---------- */
         .masthead {{
-            border-top: 3px solid {PALETTE["ink"]};
+            border-top: 2px solid {PALETTE["ink"]};
             border-bottom: 1px solid {PALETTE["rule"]};
-            padding: 0.9rem 0 1.1rem 0;
-            margin-bottom: 1.6rem;
+            padding: 0.5rem 0 0.6rem 0;
+            margin-bottom: 0.9rem;
         }}
-        .masthead .eyebrow {{ margin-bottom: 0.35rem; }}
+        .masthead .eyebrow {{ margin-bottom: 0.2rem; }}
         .masthead h1 {{
-            font-size: 2.1rem !important;
+            font-size: 1.55rem !important;
             margin: 0 !important;
             line-height: 1.15;
         }}
         .masthead .dek {{
             font-family: 'Inter', sans-serif;
             color: {PALETTE["muted"]};
-            font-size: 0.95rem;
-            margin-top: 0.35rem;
+            font-size: 0.82rem;
+            margin-top: 0.2rem;
         }}
         .masthead .meta {{
             font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.72rem;
+            font-size: 0.68rem;
             color: {PALETTE["muted"]};
             letter-spacing: 0.02em;
-            margin-top: 0.6rem;
+            margin-top: 0.3rem;
         }}
 
         /* ---------- Sidebar ---------- */
@@ -189,18 +198,26 @@ def inject_design_system():
         [data-testid="stSidebar"] h2,
         [data-testid="stSidebar"] h3 {{
             font-family: 'Fraunces', serif !important;
+            font-weight: 500 !important;
             color: {PALETTE["paper_text"]} !important;
-            border-bottom: 1px solid rgba(238,234,224,0.18);
-            padding-bottom: 0.4rem;
+            border-bottom: 1px solid rgba(217,212,199,0.14);
+            padding-bottom: 0.3rem;
+            margin-top: 0.4rem !important;
+            margin-bottom: 0.4rem !important;
+            font-size: 1.05rem !important;
         }}
         [data-testid="stSidebar"] .eyebrow {{ color: {PALETTE["gold"]}; }}
-        [data-testid="stSidebar"] hr {{ border-color: rgba(238,234,224,0.16) !important; }}
-        [data-testid="stSidebar"] label {{ color: {PALETTE["paper_text"]} !important; opacity: 0.85; }}
+        [data-testid="stSidebar"] hr {{
+            border-color: rgba(217,212,199,0.12) !important;
+            margin: 0.6rem 0 !important;
+        }}
+        [data-testid="stSidebar"] label {{ color: {PALETTE["paper_text"]} !important; opacity: 0.8; }}
+        [data-testid="stSidebar"] .block-container {{ padding-top: 1.2rem !important; }}
 
         [data-testid="stSidebar"] input,
         [data-testid="stSidebar"] [data-baseweb="select"] > div {{
             background: {PALETTE["ink_2"]} !important;
-            border: 1px solid rgba(238,234,224,0.20) !important;
+            border: 1px solid rgba(217,212,199,0.16) !important;
             color: {PALETTE["paper_text"]} !important;
             border-radius: 4px !important;
         }}
@@ -211,11 +228,11 @@ def inject_design_system():
             color: {PALETTE["paper_text"]} !important;
             border: 1px solid {PALETTE["emerald"]} !important;
             border-radius: 4px !important;
-            font-weight: 600 !important;
-            letter-spacing: 0.03em;
+            font-weight: 500 !important;
+            letter-spacing: 0.02em;
             text-transform: uppercase;
-            font-size: 0.78rem !important;
-            padding: 0.55rem 1.1rem !important;
+            font-size: 0.74rem !important;
+            padding: 0.35rem 0.85rem !important;
             transition: all 0.15s ease-in-out;
         }}
         .stButton > button:hover, button[kind="primary"]:hover {{
@@ -229,20 +246,21 @@ def inject_design_system():
             background: {PALETTE["paper_2"]};
             border: 1px solid {PALETTE["rule"]};
             border-radius: 6px;
-            padding: 0.9rem 1rem 0.7rem 1rem;
+            padding: 0.5rem 0.65rem 0.4rem 0.65rem;
         }}
         [data-testid="stMetricLabel"] {{
             font-family: 'Inter', sans-serif !important;
-            font-size: 0.72rem !important;
-            font-weight: 600 !important;
-            letter-spacing: 0.08em;
+            font-size: 0.66rem !important;
+            font-weight: 500 !important;
+            letter-spacing: 0.06em;
             text-transform: uppercase;
             color: {PALETTE["muted"]} !important;
         }}
         [data-testid="stMetricValue"] {{
             font-family: 'IBM Plex Mono', monospace !important;
             color: {PALETTE["ink"]} !important;
-            font-weight: 600 !important;
+            font-weight: 500 !important;
+            font-size: 1.3rem !important;
         }}
 
         /* ---------- Dataframes & expanders ---------- */
@@ -263,10 +281,16 @@ def inject_design_system():
         .stAlert {{ border-radius: 6px !important; }}
 
         /* ---------- Rules ---------- */
-        hr {{ border-color: {PALETTE["rule"]} !important; }}
+        hr {{ border-color: {PALETTE["rule"]} !important; margin: 0.6rem 0 !important; }}
 
         /* ---------- Section header block ---------- */
         .section-head h3 {{ margin-top: 0 !important; }}
+
+        /* ---------- General compaction ---------- */
+        div[data-testid="stVerticalBlock"] {{ gap: 0.5rem; }}
+        div[data-testid="stHorizontalBlock"] {{ gap: 0.6rem; }}
+        .element-container {{ margin-bottom: 0.15rem !important; }}
+        [data-testid="stDataFrame"] {{ font-size: 0.85rem; }}
         </style>
         """,
         unsafe_allow_html=True,
@@ -311,7 +335,7 @@ def themed_layout(fig, height=None, title=None):
     )
     if title:
         layout_kwargs["title"] = dict(
-            text=title, font=dict(family="Fraunces, serif", size=17, color=PALETTE["ink"])
+            text=title, font=dict(family="Fraunces, serif", size=15, color=PALETTE["ink"])
         )
     if height:
         layout_kwargs["height"] = height
@@ -929,10 +953,10 @@ if 'risk_manager' in st.session_state:
                     row=2, col=1
                 )
 
-            themed_layout(fig, height=520)
+            themed_layout(fig, height=380)
             fig.update_layout(showlegend=False)
             for ann in fig['layout']['annotations']:
-                ann['font'] = dict(family="Fraunces, serif", size=14, color=PALETTE["ink"])
+                ann['font'] = dict(family="Fraunces, serif", size=12, color=PALETTE["ink"])
             fig.update_yaxes(title_text="Portfolio Value ($)", row=1, col=1)
             fig.update_yaxes(title_text="Drawdown (%)", row=2, col=1)
             st.plotly_chart(fig, use_container_width=True)
@@ -955,7 +979,7 @@ if 'risk_manager' in st.session_state:
                 texttemplate='%{text}',
                 textfont={"size": 11, "family": "IBM Plex Mono, monospace"},
             ))
-            themed_layout(fig, height=500)
+            themed_layout(fig, height=380)
             st.plotly_chart(fig, use_container_width=True)
 
         # Row 6: Risk Contribution
@@ -968,7 +992,7 @@ if 'risk_manager' in st.session_state:
             })
             fig = px.pie(contrib_df, values='Risk Contribution %', names='Asset',
                          color_discrete_sequence=PLOTLY_COLORWAY, hole=0.45)
-            themed_layout(fig, height=440, title="Risk Contribution")
+            themed_layout(fig, height=340, title="Risk Contribution")
             st.plotly_chart(fig, use_container_width=True)
 
         # Row 7: Monte Carlo Simulation
@@ -1010,7 +1034,7 @@ if 'risk_manager' in st.session_state:
                     line=dict(color=PALETTE["gold"], width=2, dash='dash')
                 ))
 
-                themed_layout(fig, height=500, title="Monte Carlo Projections")
+                themed_layout(fig, height=380, title="Monte Carlo Projections")
                 fig.update_layout(xaxis_title='Days', yaxis_title='Portfolio Value ($)')
                 st.plotly_chart(fig, use_container_width=True)
 
