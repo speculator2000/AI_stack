@@ -78,9 +78,247 @@ except ImportError as e:
 warnings.filterwarnings('ignore')
 
 # --- 1. Configuration ---
-st.set_page_config(page_title="Risk Management Model", layout="wide")
-st.title("🛡️ Risk Management Model")
-st.markdown("**Comprehensive portfolio risk analysis with VaR, CVaR, Monte Carlo, and stress testing**")
+st.set_page_config(page_title="Risk Management Model", page_icon="🛡️", layout="wide")
+
+
+# =============================================================================
+# DESIGN SYSTEM
+# -----------------------------------------------------------------------------
+# A private-research-desk aesthetic: ink navy + ledger ivory, a deep emerald
+# and antique gold as the two accents, set in a serif display face (Fraunces)
+# over a quiet grotesque body face (Inter), with figures in a monospace
+# (IBM Plex Mono) so numbers line up the way they would on a real risk memo.
+# =============================================================================
+
+PALETTE = {
+    "ink": "#0E1A2B",        # near-black navy — sidebar, headings
+    "ink_2": "#1B2F49",      # secondary ink surface
+    "paper": "#F7F4EC",      # warm ivory — page background
+    "paper_2": "#EFEADA",    # card / metric surface
+    "rule": "rgba(14,26,43,0.14)",   # hairline dividers
+    "text": "#1B2430",       # body text on paper
+    "muted": "#5B6472",      # secondary text
+    "paper_text": "#EEEAE0", # text on ink surfaces
+    "emerald": "#1F4D3D",    # primary accent — gains, confidence
+    "emerald_soft": "rgba(31,77,61,0.10)",
+    "gold": "#B08D57",       # secondary accent — highlights, rules
+    "gold_soft": "rgba(176,141,87,0.14)",
+    "burgundy": "#7A2E2E",   # risk / loss accent
+    "burgundy_soft": "rgba(122,46,46,0.10)",
+}
+
+PLOTLY_COLORWAY = [
+    PALETTE["emerald"], PALETTE["gold"], PALETTE["burgundy"],
+    "#3F6B57", "#8C6E4A", "#4A5A73",
+]
+
+
+def inject_design_system():
+    st.markdown(
+        f"""
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+        html, body, [class*="css"] {{
+            font-family: 'Inter', -apple-system, sans-serif;
+        }}
+
+        .stApp {{
+            background: {PALETTE["paper"]};
+            color: {PALETTE["text"]};
+        }}
+
+        /* ---------- Typography ---------- */
+        h1, h2, h3, h4 {{
+            font-family: 'Fraunces', serif !important;
+            color: {PALETTE["ink"]} !important;
+            font-weight: 600 !important;
+            letter-spacing: -0.01em;
+        }}
+        h3 {{
+            border-bottom: 1px solid {PALETTE["rule"]};
+            padding-bottom: 0.5rem;
+            margin-top: 2.2rem !important;
+        }}
+        .eyebrow {{
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: {PALETTE["gold"]};
+            margin-bottom: 0.15rem;
+        }}
+
+        /* ---------- Masthead ---------- */
+        .masthead {{
+            border-top: 3px solid {PALETTE["ink"]};
+            border-bottom: 1px solid {PALETTE["rule"]};
+            padding: 0.9rem 0 1.1rem 0;
+            margin-bottom: 1.6rem;
+        }}
+        .masthead .eyebrow {{ margin-bottom: 0.35rem; }}
+        .masthead h1 {{
+            font-size: 2.1rem !important;
+            margin: 0 !important;
+            line-height: 1.15;
+        }}
+        .masthead .dek {{
+            font-family: 'Inter', sans-serif;
+            color: {PALETTE["muted"]};
+            font-size: 0.95rem;
+            margin-top: 0.35rem;
+        }}
+        .masthead .meta {{
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.72rem;
+            color: {PALETTE["muted"]};
+            letter-spacing: 0.02em;
+            margin-top: 0.6rem;
+        }}
+
+        /* ---------- Sidebar ---------- */
+        [data-testid="stSidebar"] {{
+            background: {PALETTE["ink"]};
+        }}
+        [data-testid="stSidebar"] * {{
+            color: {PALETTE["paper_text"]} !important;
+        }}
+        [data-testid="stSidebar"] h1,
+        [data-testid="stSidebar"] h2,
+        [data-testid="stSidebar"] h3 {{
+            font-family: 'Fraunces', serif !important;
+            color: {PALETTE["paper_text"]} !important;
+            border-bottom: 1px solid rgba(238,234,224,0.18);
+            padding-bottom: 0.4rem;
+        }}
+        [data-testid="stSidebar"] .eyebrow {{ color: {PALETTE["gold"]}; }}
+        [data-testid="stSidebar"] hr {{ border-color: rgba(238,234,224,0.16) !important; }}
+        [data-testid="stSidebar"] label {{ color: {PALETTE["paper_text"]} !important; opacity: 0.85; }}
+
+        [data-testid="stSidebar"] input,
+        [data-testid="stSidebar"] [data-baseweb="select"] > div {{
+            background: {PALETTE["ink_2"]} !important;
+            border: 1px solid rgba(238,234,224,0.20) !important;
+            color: {PALETTE["paper_text"]} !important;
+            border-radius: 4px !important;
+        }}
+
+        /* ---------- Buttons ---------- */
+        .stButton > button, button[kind="primary"] {{
+            background: {PALETTE["emerald"]} !important;
+            color: {PALETTE["paper_text"]} !important;
+            border: 1px solid {PALETTE["emerald"]} !important;
+            border-radius: 4px !important;
+            font-weight: 600 !important;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            font-size: 0.78rem !important;
+            padding: 0.55rem 1.1rem !important;
+            transition: all 0.15s ease-in-out;
+        }}
+        .stButton > button:hover, button[kind="primary"]:hover {{
+            background: {PALETTE["ink"]} !important;
+            border-color: {PALETTE["gold"]} !important;
+            color: {PALETTE["gold"]} !important;
+        }}
+
+        /* ---------- Metrics ---------- */
+        [data-testid="stMetric"] {{
+            background: {PALETTE["paper_2"]};
+            border: 1px solid {PALETTE["rule"]};
+            border-radius: 6px;
+            padding: 0.9rem 1rem 0.7rem 1rem;
+        }}
+        [data-testid="stMetricLabel"] {{
+            font-family: 'Inter', sans-serif !important;
+            font-size: 0.72rem !important;
+            font-weight: 600 !important;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: {PALETTE["muted"]} !important;
+        }}
+        [data-testid="stMetricValue"] {{
+            font-family: 'IBM Plex Mono', monospace !important;
+            color: {PALETTE["ink"]} !important;
+            font-weight: 600 !important;
+        }}
+
+        /* ---------- Dataframes & expanders ---------- */
+        [data-testid="stDataFrame"] {{
+            border: 1px solid {PALETTE["rule"]};
+            border-radius: 6px;
+            overflow: hidden;
+        }}
+        [data-testid="stExpander"] {{
+            border: 1px solid {PALETTE["rule"]} !important;
+            border-radius: 6px !important;
+            background: {PALETTE["paper_2"]};
+        }}
+
+        /* ---------- Alert boxes retinted to the palette ---------- */
+        [data-testid="stAlertContentInfo"] {{ color: {PALETTE["ink"]} !important; }}
+        div[data-baseweb="notification"] {{ border-radius: 6px !important; }}
+        .stAlert {{ border-radius: 6px !important; }}
+
+        /* ---------- Rules ---------- */
+        hr {{ border-color: {PALETTE["rule"]} !important; }}
+
+        /* ---------- Section header block ---------- */
+        .section-head h3 {{ margin-top: 0 !important; }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def masthead(eyebrow, title, dek, meta):
+    st.markdown(
+        f"""
+        <div class="masthead">
+            <span class="eyebrow">{eyebrow}</span>
+            <h1>{title}</h1>
+            <div class="dek">{dek}</div>
+            <div class="meta">{meta}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def section_header(eyebrow, title):
+    st.markdown(
+        f"""
+        <div class="section-head">
+            <span class="eyebrow">{eyebrow}</span>
+            <h3>{title}</h3>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def themed_layout(fig, height=None, title=None):
+    """Apply the house plotly theme to a figure in place, and return it."""
+    layout_kwargs = dict(
+        paper_bgcolor=PALETTE["paper"],
+        plot_bgcolor=PALETTE["paper"],
+        font=dict(family="Inter, sans-serif", color=PALETTE["text"], size=13),
+        colorway=PLOTLY_COLORWAY,
+        margin=dict(t=54 if title else 24, l=10, r=10, b=10),
+        legend=dict(font=dict(family="Inter, sans-serif", size=12)),
+    )
+    if title:
+        layout_kwargs["title"] = dict(
+            text=title, font=dict(family="Fraunces, serif", size=17, color=PALETTE["ink"])
+        )
+    if height:
+        layout_kwargs["height"] = height
+    fig.update_layout(**layout_kwargs)
+    fig.update_xaxes(gridcolor="rgba(14,26,43,0.08)", zerolinecolor="rgba(14,26,43,0.15)", linecolor=PALETTE["rule"])
+    fig.update_yaxes(gridcolor="rgba(14,26,43,0.08)", zerolinecolor="rgba(14,26,43,0.15)", linecolor=PALETTE["rule"])
+    return fig
 
 
 def _clean_close_series(df, label):
@@ -502,9 +740,21 @@ class RiskManager:
 
 # --- 3. Streamlit Dashboard ---
 
+inject_design_system()
+
+masthead(
+    eyebrow="Confidential &middot; Portfolio Risk Desk",
+    title="Risk Management Model",
+    dek="Value at Risk, Expected Shortfall, Markowitz optimization, Monte Carlo projection, and stress testing "
+        "for a single portfolio.",
+    meta=f"Prepared {datetime.now().strftime('%d %b %Y &middot; %H:%M')} &middot; Simulation for educational and "
+         f"professional use",
+)
+
 # Sidebar configuration
 with st.sidebar:
-    st.header("⚙️ Portfolio Configuration")
+    st.markdown('<span class="eyebrow">Desk Setup</span>', unsafe_allow_html=True)
+    st.header("Portfolio Configuration")
 
     # Input tickers
     tickers_input = st.text_input(
@@ -543,7 +793,7 @@ with st.sidebar:
 
     period_days = st.slider("Historical Data (days)", 60, 730, 252, 30)
 
-    if st.button("🔄 Run Risk Analysis", type="primary"):
+    if st.button("Run Risk Analysis", type="primary"):
         with st.spinner("Fetching data and calculating risk metrics..."):
             risk_manager = RiskManager(tickers, weights)
             data = risk_manager.fetch_data(period=period_days)
@@ -585,10 +835,10 @@ if 'risk_manager' in st.session_state:
     horizon_days = st.session_state['horizon_days']
     n_simulations = st.session_state['n_simulations']
 
-    st.subheader(f"📊 Portfolio Risk Analysis")
+    section_header("Holdings", f"Portfolio Risk Analysis &middot; {', '.join(tickers)}")
 
     # Display weights - Fixed: Convert numpy array to list
-    st.write(f"**Portfolio Weights:**")
+    st.write("**Portfolio Weights**")
     weight_df = pd.DataFrame({
         'Ticker': tickers,
         'Weight': list(weights)  # Convert numpy array to list
@@ -601,7 +851,7 @@ if 'risk_manager' in st.session_state:
 
     if report:
         # Row 1: Key Metrics
-        st.markdown("### 📈 Key Performance Metrics")
+        section_header("Performance", "Key Performance Metrics")
         col1, col2, col3, col4, col5 = st.columns(5)
 
         with col1:
@@ -616,7 +866,7 @@ if 'risk_manager' in st.session_state:
             st.metric("Max Drawdown", f"{report['max_drawdown']:.2%}")
 
         # Row 2: VaR Metrics
-        st.markdown("### 📉 Value at Risk (VaR) & Expected Shortfall")
+        section_header("Downside", "Value at Risk & Expected Shortfall")
         col1, col2, col3, col4, col5 = st.columns(5)
 
         with col1:
@@ -629,14 +879,14 @@ if 'risk_manager' in st.session_state:
             st.metric(f"VaR {confidence_level:.0%} (Monte Carlo)",
                       f"{report['var_95_monte_carlo'] * 100:.2f}%")
         with col4:
-            st.metric(f"VaR 99% (Historical)",
+            st.metric("VaR 99% (Historical)",
                       f"{report['var_99_historical'] * 100:.2f}%")
         with col5:
             st.metric(f"CVaR {confidence_level:.0%}",
                       f"{report['cvar_95'] * 100:.2f}%")
 
         # Row 3: Additional Risk Metrics
-        st.markdown("### 🎯 Risk Ratios & Metrics")
+        section_header("Ratios", "Risk Ratios & Metrics")
         col1, col2, col3, col4, col5 = st.columns(5)
 
         with col1:
@@ -651,18 +901,18 @@ if 'risk_manager' in st.session_state:
             st.metric("Holding Period", f"{horizon_days} days")
 
         # Row 4: Portfolio Performance Chart
-        st.markdown("### 📈 Portfolio Performance")
+        section_header("Trajectory", "Portfolio Performance")
         portfolio_values = risk_manager._calculate_portfolio_values()
         if portfolio_values is not None:
             fig = make_subplots(rows=2, cols=1, shared_xaxes=True,
                                 subplot_titles=("Portfolio Value", "Drawdown"),
-                                vertical_spacing=0.1)
+                                vertical_spacing=0.12)
 
             # Portfolio value
             fig.add_trace(
                 go.Scatter(x=portfolio_values.index, y=portfolio_values,
                            mode='lines', name='Portfolio Value',
-                           line=dict(color='blue', width=2)),
+                           line=dict(color=PALETTE["emerald"], width=2)),
                 row=1, col=1
             )
 
@@ -673,35 +923,43 @@ if 'risk_manager' in st.session_state:
                     go.Scatter(x=dd_data['drawdown_series'].index,
                                y=dd_data['drawdown_series'] * 100,
                                mode='lines', name='Drawdown %',
-                               line=dict(color='red', width=2),
+                               line=dict(color=PALETTE["burgundy"], width=2),
+                               fillcolor=PALETTE["burgundy_soft"],
                                fill='tozeroy'),
                     row=2, col=1
                 )
 
-            fig.update_layout(height=500, showlegend=False)
+            themed_layout(fig, height=520)
+            fig.update_layout(showlegend=False)
+            for ann in fig['layout']['annotations']:
+                ann['font'] = dict(family="Fraunces, serif", size=14, color=PALETTE["ink"])
             fig.update_yaxes(title_text="Portfolio Value ($)", row=1, col=1)
             fig.update_yaxes(title_text="Drawdown (%)", row=2, col=1)
             st.plotly_chart(fig, use_container_width=True)
 
         # Row 5: Correlation Heatmap
-        st.markdown("### 🔗 Correlation Matrix")
+        section_header("Structure", "Correlation Matrix")
         corr_matrix = risk_manager.corr_matrix
         if corr_matrix is not None:
             fig = go.Figure(data=go.Heatmap(
                 z=corr_matrix.values,
                 x=corr_matrix.columns,
                 y=corr_matrix.index,
-                colorscale='RdBu',
+                colorscale=[
+                    [0.0, PALETTE["burgundy"]],
+                    [0.5, PALETTE["paper"]],
+                    [1.0, PALETTE["emerald"]],
+                ],
                 zmid=0,
                 text=corr_matrix.values.round(2),
                 texttemplate='%{text}',
-                textfont={"size": 10}
+                textfont={"size": 11, "family": "IBM Plex Mono, monospace"},
             ))
-            fig.update_layout(height=500)
+            themed_layout(fig, height=500)
             st.plotly_chart(fig, use_container_width=True)
 
         # Row 6: Risk Contribution
-        st.markdown("### 🧩 Risk Contribution by Asset")
+        section_header("Composition", "Risk Contribution by Asset")
         risk_contrib = risk_manager.calculate_risk_contribution()
         if risk_contrib:
             contrib_df = pd.DataFrame({
@@ -709,11 +967,12 @@ if 'risk_manager' in st.session_state:
                 'Risk Contribution %': list(risk_contrib.values())
             })
             fig = px.pie(contrib_df, values='Risk Contribution %', names='Asset',
-                         title='Risk Contribution')
+                         color_discrete_sequence=PLOTLY_COLORWAY, hole=0.45)
+            themed_layout(fig, height=440, title="Risk Contribution")
             st.plotly_chart(fig, use_container_width=True)
 
         # Row 7: Monte Carlo Simulation
-        st.markdown("### 🎲 Monte Carlo Simulation")
+        section_header("Projection", "Monte Carlo Simulation")
         with st.spinner("Running Monte Carlo simulation..."):
             mc_results = risk_manager.run_monte_carlo(n_simulations, horizon_days)
             if mc_results:
@@ -726,7 +985,7 @@ if 'risk_manager' in st.session_state:
                     fig.add_trace(go.Scatter(
                         y=path,
                         mode='lines',
-                        line=dict(width=0.5, color='lightgray'),
+                        line=dict(width=0.6, color="rgba(14,26,43,0.10)"),
                         showlegend=False
                     ))
 
@@ -736,27 +995,23 @@ if 'risk_manager' in st.session_state:
                     y=[percentiles['5th']] * len(path),
                     mode='lines',
                     name='5th Percentile',
-                    line=dict(color='red', width=2, dash='dash')
+                    line=dict(color=PALETTE["burgundy"], width=2, dash='dash')
                 ))
                 fig.add_trace(go.Scatter(
                     y=[percentiles['50th']] * len(path),
                     mode='lines',
                     name='Median',
-                    line=dict(color='green', width=2)
+                    line=dict(color=PALETTE["emerald"], width=2)
                 ))
                 fig.add_trace(go.Scatter(
                     y=[percentiles['95th']] * len(path),
                     mode='lines',
                     name='95th Percentile',
-                    line=dict(color='blue', width=2, dash='dash')
+                    line=dict(color=PALETTE["gold"], width=2, dash='dash')
                 ))
 
-                fig.update_layout(
-                    title='Monte Carlo Projections',
-                    xaxis_title='Days',
-                    yaxis_title='Portfolio Value ($)',
-                    height=500
-                )
+                themed_layout(fig, height=500, title="Monte Carlo Projections")
+                fig.update_layout(xaxis_title='Days', yaxis_title='Portfolio Value ($)')
                 st.plotly_chart(fig, use_container_width=True)
 
                 # Show percentiles
@@ -773,7 +1028,7 @@ if 'risk_manager' in st.session_state:
                     st.metric("95th Percentile", f"${percentiles['95th']:.0f}")
 
         # Row 8: Stress Testing
-        st.markdown("### 🌩️ Stress Testing")
+        section_header("Scenarios", "Stress Testing")
         col1, col2 = st.columns(2)
 
         with col1:
@@ -790,7 +1045,7 @@ if 'risk_manager' in st.session_state:
             if 'stress_results' in st.session_state:
                 stress = st.session_state['stress_results']
                 st.info(f"""
-                **Stress Test Results - {scenario.replace('_', ' ').title()}**
+                **Stress Test Results &middot; {scenario.replace('_', ' ').title()}**
                 - **Shock Return:** {stress['shock_return']:.2%}
                 - **Portfolio Loss:** {stress['portfolio_loss']:.2%}
                 - **VaR Shock:** {stress['var_shock']:.2%}
@@ -798,22 +1053,21 @@ if 'risk_manager' in st.session_state:
                 """)
 
         # Row 9: Data Table
-        with st.expander("📋 Historical Data"):
+        with st.expander("Historical Data"):
             numeric_cols = data.select_dtypes(include=[np.number]).columns
             st.dataframe(data.tail(20).style.format("{:.2f}", subset=numeric_cols))
 
 else:
-    st.info("👈 Configure the portfolio parameters in the sidebar and click 'Run Risk Analysis' to start.")
+    st.info("Configure the portfolio parameters in the sidebar and select **Run Risk Analysis** to begin.")
+    section_header("Method", "How This Risk Management Model Works")
     st.markdown("""
-    ### 🎯 How This Risk Management Model Works
+    This system provides institutional-grade risk analytics across seven disciplines:
 
-    This comprehensive system provides institutional-grade risk analytics:
-
-    1. **Value at Risk (VaR)**: Historical, Parametric, and Monte Carlo methods
-    2. **Expected Shortfall (CVaR)**: Average loss beyond VaR
-    3. **Portfolio Optimization**: Markowitz efficient frontier (Sharpe & Min Variance)
-    4. **Monte Carlo Simulation**: 1000+ paths for portfolio projections
-    5. **Stress Testing**: Market crash, volatility shock, flash crash scenarios
-    6. **Risk Metrics**: Sharpe, Sortino, Calmar ratios, Beta, Max Drawdown
-    7. **Visualizations**: Performance charts, correlation heatmaps, risk contribution
+    1. **Value at Risk (VaR)** &mdash; Historical, Parametric, and Monte Carlo methods
+    2. **Expected Shortfall (CVaR)** &mdash; average loss beyond VaR
+    3. **Portfolio Optimization** &mdash; Markowitz efficient frontier (Sharpe & Min Variance)
+    4. **Monte Carlo Simulation** &mdash; 1,000+ paths for portfolio projections
+    5. **Stress Testing** &mdash; market crash, volatility shock, and flash crash scenarios
+    6. **Risk Metrics** &mdash; Sharpe, Sortino, Calmar ratios, Beta, and Maximum Drawdown
+    7. **Visualizations** &mdash; performance charts, correlation heatmaps, and risk contribution
     """)
