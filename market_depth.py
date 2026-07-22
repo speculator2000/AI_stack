@@ -144,6 +144,7 @@ def inject_design_system():
             text-transform: uppercase;
             color: {PALETTE["gold"]};
             margin-bottom: 0.1rem;
+            text-align: center;
         }}
 
         /* ---------- Masthead ---------- */
@@ -152,12 +153,15 @@ def inject_design_system():
             border-bottom: 1px solid {PALETTE["rule"]};
             padding: 0.5rem 0 0.6rem 0;
             margin-bottom: 0.9rem;
+            text-align: center;
         }}
         .masthead .eyebrow {{ margin-bottom: 0.2rem; }}
         .masthead h1 {{
-            font-size: 1.55rem !important;
+            font-size: 2.0rem !important;
             margin: 0 !important;
             line-height: 1.15;
+            text-align: center;
+            font-weight: 600 !important;
         }}
         .masthead .dek {{
             font-family: 'Inter', sans-serif;
