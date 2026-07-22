@@ -119,6 +119,7 @@ def inject_design_system():
             text-transform: uppercase;
             color: {PALETTE["gold"]};
             margin-bottom: 0.1rem;
+            text-align: center;  
         }}
 
         /* ---------- Masthead ---------- */
@@ -127,6 +128,7 @@ def inject_design_system():
             border-bottom: 1px solid {PALETTE["rule"]};
             padding: 0.5rem 0 0.6rem 0;
             margin-bottom: 0.9rem;
+            text-align: center;  
         }}
         .masthead .eyebrow {{ margin-bottom: 0.2rem; }}
         .masthead h1 {{
