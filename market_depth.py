@@ -66,9 +66,262 @@ class Config:
     CACHE_TTL_SECONDS = 300
 
 # --- Setup Page Config ---
-st.set_page_config(page_title="Market Depth Analysis", layout="wide")
-st.title("📊 Market Analysis Depth Model")
-st.markdown("**Professional order book depth analysis with simulated L2/L3 market data**")
+st.set_page_config(page_title="Market Depth Analysis", page_icon="📊", layout="wide")
+
+# =============================================================================
+# DESIGN SYSTEM
+# -----------------------------------------------------------------------------
+# Same research-desk aesthetic used across the other apps in this suite: ink
+# slate + ledger ivory, deep emerald / antique gold accents, Fraunces for
+# display type, Inter for body text, IBM Plex Mono for figures.
+# =============================================================================
+
+PALETTE = {
+    "ink": "#2B3B50",        # soft slate navy — sidebar, headings
+    "ink_2": "#374B65",      # secondary ink surface
+    "paper": "#F6F4EE",      # warm ivory — page background
+    "paper_2": "#EFEBE0",    # card / metric surface
+    "rule": "rgba(43,59,80,0.10)",   # hairline dividers
+    "text": "#33404F",       # body text on paper
+    "muted": "#697787",      # secondary text
+    "paper_text": "#D9D4C7", # text on ink surfaces
+    "emerald": "#33604F",    # primary accent — bids, gains, confidence
+    "emerald_soft": "rgba(51,96,79,0.08)",
+    "gold": "#B0925F",       # secondary accent — highlights, rules
+    "gold_soft": "rgba(176,146,95,0.12)",
+    "burgundy": "#8A4A4A",   # asks, risk / loss accent
+    "burgundy_soft": "rgba(138,74,74,0.08)",
+}
+
+PLOTLY_COLORWAY = [
+    PALETTE["emerald"], PALETTE["gold"], PALETTE["burgundy"],
+    "#3F6B57", "#8C6E4A", "#4A5A73",
+]
+
+
+def inject_design_system():
+    st.markdown(
+        f"""
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+        html, body, [class*="css"] {{
+            font-family: 'Inter', -apple-system, sans-serif;
+        }}
+
+        .stApp {{
+            background: {PALETTE["paper"]};
+            color: {PALETTE["text"]};
+            font-size: 0.92rem;
+        }}
+
+        .block-container {{
+            padding-top: 1.6rem !important;
+            padding-bottom: 1.5rem !important;
+            max-width: 1300px;
+        }}
+
+        /* ---------- Typography ---------- */
+        h1, h2, h3, h4 {{
+            font-family: 'Fraunces', serif !important;
+            color: {PALETTE["ink"]} !important;
+            font-weight: 500 !important;
+            letter-spacing: -0.01em;
+        }}
+        h3 {{
+            border-bottom: 1px solid {PALETTE["rule"]};
+            padding-bottom: 0.3rem;
+            margin-top: 1.1rem !important;
+            margin-bottom: 0.6rem !important;
+            font-size: 1.15rem !important;
+        }}
+        .eyebrow {{
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 600;
+            letter-spacing: 0.13em;
+            text-transform: uppercase;
+            color: {PALETTE["gold"]};
+            margin-bottom: 0.1rem;
+        }}
+
+        /* ---------- Masthead ---------- */
+        .masthead {{
+            border-top: 2px solid {PALETTE["ink"]};
+            border-bottom: 1px solid {PALETTE["rule"]};
+            padding: 0.5rem 0 0.6rem 0;
+            margin-bottom: 0.9rem;
+        }}
+        .masthead .eyebrow {{ margin-bottom: 0.2rem; }}
+        .masthead h1 {{
+            font-size: 1.55rem !important;
+            margin: 0 !important;
+            line-height: 1.15;
+        }}
+        .masthead .dek {{
+            font-family: 'Inter', sans-serif;
+            color: {PALETTE["muted"]};
+            font-size: 0.82rem;
+            margin-top: 0.2rem;
+        }}
+
+        /* ---------- Sidebar ---------- */
+        [data-testid="stSidebar"] {{
+            background: {PALETTE["ink"]};
+        }}
+        [data-testid="stSidebar"] * {{
+            color: {PALETTE["paper_text"]} !important;
+        }}
+        [data-testid="stSidebar"] h1,
+        [data-testid="stSidebar"] h2,
+        [data-testid="stSidebar"] h3 {{
+            font-family: 'Fraunces', serif !important;
+            font-weight: 500 !important;
+            color: {PALETTE["paper_text"]} !important;
+            border-bottom: 1px solid rgba(217,212,199,0.14);
+            padding-bottom: 0.3rem;
+            margin-top: 0.4rem !important;
+            margin-bottom: 0.4rem !important;
+            font-size: 1.05rem !important;
+        }}
+        [data-testid="stSidebar"] hr {{
+            border-color: rgba(217,212,199,0.12) !important;
+            margin: 0.6rem 0 !important;
+        }}
+        [data-testid="stSidebar"] label {{ color: {PALETTE["paper_text"]} !important; opacity: 0.8; }}
+
+        [data-testid="stSidebar"] input,
+        [data-testid="stSidebar"] [data-baseweb="select"] > div {{
+            background: {PALETTE["ink_2"]} !important;
+            border: 1px solid rgba(217,212,199,0.16) !important;
+            color: {PALETTE["paper_text"]} !important;
+            border-radius: 4px !important;
+        }}
+
+        /* ---------- Buttons ---------- */
+        .stButton > button, button[kind="primary"] {{
+            background: {PALETTE["emerald"]} !important;
+            color: {PALETTE["paper_text"]} !important;
+            border: 1px solid {PALETTE["emerald"]} !important;
+            border-radius: 4px !important;
+            font-weight: 500 !important;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            font-size: 0.74rem !important;
+            padding: 0.35rem 0.85rem !important;
+        }}
+        .stButton > button:hover, button[kind="primary"]:hover {{
+            background: {PALETTE["ink"]} !important;
+            border-color: {PALETTE["gold"]} !important;
+            color: {PALETTE["gold"]} !important;
+        }}
+
+        /* ---------- Metrics ---------- */
+        [data-testid="stMetric"] {{
+            background: {PALETTE["paper_2"]};
+            border: 1px solid {PALETTE["rule"]};
+            border-radius: 6px;
+            padding: 0.5rem 0.65rem 0.4rem 0.65rem;
+        }}
+        [data-testid="stMetricLabel"] {{
+            font-family: 'Inter', sans-serif !important;
+            font-size: 0.66rem !important;
+            font-weight: 500 !important;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: {PALETTE["muted"]} !important;
+        }}
+        [data-testid="stMetricValue"] {{
+            font-family: 'IBM Plex Mono', monospace !important;
+            color: {PALETTE["ink"]} !important;
+            font-weight: 500 !important;
+            font-size: 1.3rem !important;
+        }}
+
+        /* ---------- Dataframes & expanders ---------- */
+        [data-testid="stDataFrame"] {{
+            border: 1px solid {PALETTE["rule"]};
+            border-radius: 6px;
+            overflow: hidden;
+            font-size: 0.85rem;
+        }}
+        [data-testid="stExpander"] {{
+            border: 1px solid {PALETTE["rule"]} !important;
+            border-radius: 6px !important;
+            background: {PALETTE["paper_2"]};
+        }}
+
+        /* ---------- Rules ---------- */
+        hr {{ border-color: {PALETTE["rule"]} !important; margin: 0.6rem 0 !important; }}
+
+        /* ---------- Section header block ---------- */
+        .section-head h3 {{ margin-top: 0 !important; }}
+
+        /* ---------- General compaction ---------- */
+        div[data-testid="stVerticalBlock"] {{ gap: 0.5rem; }}
+        div[data-testid="stHorizontalBlock"] {{ gap: 0.6rem; }}
+        .element-container {{ margin-bottom: 0.15rem !important; }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def masthead(eyebrow, title, dek):
+    st.markdown(
+        f"""
+        <div class="masthead">
+            <span class="eyebrow">{eyebrow}</span>
+            <h1>{title}</h1>
+            <div class="dek">{dek}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def section_header(eyebrow, title):
+    st.markdown(
+        f"""
+        <div class="section-head">
+            <span class="eyebrow">{eyebrow}</span>
+            <h3>{title}</h3>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def themed_layout(fig, height=None, title=None):
+    """Apply the house plotly theme to a figure in place, and return it."""
+    layout_kwargs = dict(
+        paper_bgcolor=PALETTE["paper"],
+        plot_bgcolor=PALETTE["paper"],
+        font=dict(family="Inter, sans-serif", color=PALETTE["text"], size=12),
+        colorway=PLOTLY_COLORWAY,
+        margin=dict(t=46 if title else 24, l=10, r=10, b=10),
+        legend=dict(font=dict(family="Inter, sans-serif", size=11)),
+    )
+    if title:
+        layout_kwargs["title"] = dict(
+            text=title, font=dict(family="Fraunces, serif", size=15, color=PALETTE["ink"])
+        )
+    if height:
+        layout_kwargs["height"] = height
+    fig.update_layout(**layout_kwargs)
+    fig.update_xaxes(gridcolor="rgba(43,59,80,0.08)", zerolinecolor="rgba(43,59,80,0.15)", linecolor=PALETTE["rule"])
+    fig.update_yaxes(gridcolor="rgba(43,59,80,0.08)", zerolinecolor="rgba(43,59,80,0.15)", linecolor=PALETTE["rule"])
+    return fig
+
+
+inject_design_system()
+
+masthead(
+    eyebrow="Market Microstructure Desk",
+    title="Market Analysis Depth Model",
+    dek="Professional order book depth analysis with simulated L2/L3 market data",
+)
 
 # Try to import depthsim for enhanced features (optional)
 try:
@@ -611,7 +864,8 @@ def format_metric(value: float, decimal_places: int = Config.METRIC_DECIMAL_PLAC
 
 # Sidebar configuration
 with st.sidebar:
-    st.header("⚙️ Configuration")
+    st.markdown('<span class="eyebrow">Desk Setup</span>', unsafe_allow_html=True)
+    st.header("Configuration")
     
     ticker = st.text_input(
         "Ticker Symbol",
@@ -650,7 +904,7 @@ with st.sidebar:
             "`pip install conflux-depthsim`"
         )
     
-    if st.button("🔬 Run Depth Analysis", type="primary", use_container_width=True):
+    if st.button("Run Depth Analysis", type="primary", use_container_width=True):
         with st.spinner(f"Fetching {period} days of data for {ticker}..."):
             try:
                 data = fetch_and_process_data(ticker, period)
@@ -684,7 +938,7 @@ if 'analyzer' in st.session_state:
     data = st.session_state['data']
     ticker = st.session_state['ticker']
     
-    st.subheader(f"📊 Market Depth Analysis: {ticker}")
+    section_header("Overview", f"Market Depth Analysis \u00b7 {ticker}")
     
     # Row 1: Key Metrics
     col1, col2, col3, col4, col5 = st.columns(5)
@@ -716,7 +970,7 @@ if 'analyzer' in st.session_state:
         )
     
     # Row 2: Market Impact Simulation
-    st.subheader("💹 Market Impact Simulation")
+    section_header("Execution", "Market Impact Simulation")
     col1, col2 = st.columns([1, 1])
     
     with col1:
@@ -758,7 +1012,7 @@ if 'analyzer' in st.session_state:
             """)
     
     # Row 3: L2 Depth Visualization
-    st.subheader("📚 L2 Order Book Depth")
+    section_header("Order Book", "L2 Order Book Depth")
     
     latest_depth = analyzer.get_latest_depth()
     if latest_depth:
@@ -778,7 +1032,7 @@ if 'analyzer' in st.session_state:
                 x=bid_prices,
                 y=bid_sizes,
                 name='Bid Size',
-                marker_color='green',
+                marker_color=PALETTE["emerald"],
                 text=[f"{o} orders" for o in bid_orders],
                 textposition='outside'
             ),
@@ -795,14 +1049,15 @@ if 'analyzer' in st.session_state:
                 x=ask_prices,
                 y=ask_sizes,
                 name='Ask Size',
-                marker_color='red',
+                marker_color=PALETTE["burgundy"],
                 text=[f"{o} orders" for o in ask_orders],
                 textposition='outside'
             ),
             row=1, col=2
         )
         
-        fig.update_layout(height=400, showlegend=False)
+        themed_layout(fig, height=360)
+        fig.update_layout(showlegend=False)
         fig.update_xaxes(title_text="Price", row=1, col=1)
         fig.update_xaxes(title_text="Price", row=1, col=2)
         fig.update_yaxes(title_text="Size", row=1, col=1)
@@ -822,7 +1077,7 @@ if 'analyzer' in st.session_state:
             )
     
     # Row 4: Spread and Depth Trends
-    st.subheader("📈 Spread & Depth Trends")
+    section_header("Trends", "Spread & Depth Trends")
     
     if analyzer.quotes is not None:
         fig = make_subplots(
@@ -838,7 +1093,7 @@ if 'analyzer' in st.session_state:
                 y=analyzer.quotes['spread_bps'],
                 mode='lines',
                 name='Spread (bps)',
-                line=dict(color='orange')
+                line=dict(color=PALETTE["gold"])
             ),
             row=1, col=1
         )
@@ -849,16 +1104,17 @@ if 'analyzer' in st.session_state:
                 y=analyzer.quotes['mid_price'],
                 mode='lines',
                 name='Mid Price',
-                line=dict(color='blue')
+                line=dict(color=PALETTE["emerald"])
             ),
             row=2, col=1
         )
         
-        fig.update_layout(height=400, xaxis_rangeslider_visible=False)
+        themed_layout(fig, height=360)
+        fig.update_layout(xaxis_rangeslider_visible=False)
         st.plotly_chart(fig, use_container_width=True)
     
     # Row 5: Order Book Analytics (with caching)
-    st.subheader("🔍 Order Book Analytics")
+    section_header("Structure", "Order Book Analytics")
     
     if st.session_state.get('analytics_cache') is None:
         st.session_state['analytics_cache'] = analyzer.calculate_order_book_analytics()
@@ -903,7 +1159,7 @@ if 'analyzer' in st.session_state:
         )
     
     # Row 6: Recent Trade Activity
-    st.subheader("🔄 Recent Trade Activity")
+    section_header("Tape", "Recent Trade Activity")
     if analyzer.trade_sequence:
         trades_df = pd.DataFrame(analyzer.trade_sequence)
         trades_df['side'] = trades_df['side'].apply(
