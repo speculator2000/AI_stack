@@ -786,8 +786,8 @@ with st.sidebar:
 
     # Input tickers
     tickers_input = st.text_input(
-        "Ticker Symbols (comma-separated)",
-        value="AAPL, MSFT, GOOGL, AMZN, TSLA"
+        "Ticker Symbols (e.g. AAPL, MSFT, GOOGL)",
+        value="PLTR, NVDA, MAAS, AAPL, MSFT, ORCL, GOOGL, AMZN, TSLA"
     )
     tickers = [t.strip() for t in tickers_input.split(',') if t.strip()]
 
@@ -851,6 +851,8 @@ with st.sidebar:
             st.session_state['horizon_days'] = horizon_days
             st.session_state['n_simulations'] = n_simulations
             st.success("Risk analysis complete!")
+
+    st.sidebar.caption("ⓒ Franklin Chidi (FC) - MIT License")
 
 # --- 4. Dashboard Display ---
 if 'risk_manager' in st.session_state:
