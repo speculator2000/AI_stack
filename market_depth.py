@@ -902,11 +902,11 @@ with st.sidebar:
         help="Number of price levels to simulate on each side"
     )
     
-    if not HAS_DEPTHSIM:
-        st.info(
-            "ℹ️ **Using built-in simulation.** For enhanced features, install: "
-            "`pip install conflux-depthsim`"
-        )
+    #if not HAS_DEPTHSIM:
+     #   st.info(
+      #      "ℹ️ **Using built-in simulation.** For enhanced features, install: "
+       #     "`pip install conflux-depthsim`"
+        #)
     
     if st.button("Run Depth Analysis", type="primary", use_container_width=True):
         with st.spinner(f"Fetching {period} days of data for {ticker}..."):
