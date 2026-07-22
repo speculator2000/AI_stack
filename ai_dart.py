@@ -706,7 +706,7 @@ with st.sidebar:
             # Backtest simulation for the dashboard
             st.session_state['backtest_results'] = run_backtest(ai_system, data)
 
-    st.caption("Built on concepts from DART and AI Quant Platform repositories. [citation:1][citation:2]")
+    st.caption("ⓒ Franklin Chidi (FC) - MIT License")
 
 
 # --- 9. Dashboard Display ---
