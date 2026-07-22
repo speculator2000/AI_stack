@@ -323,7 +323,7 @@ inject_design_system()
 
 masthead(
     eyebrow="Market Microstructure Desk",
-    title="Market Analysis Depth AI Model",
+    title="Market Analysis Depth - AI Model",
     dek="Professional order book depth analysis with simulated L2/L3 market data",
 )
 
