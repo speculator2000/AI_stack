@@ -775,7 +775,7 @@ masthead(
     title="Risk Management - AI Model",
     dek="Value at Risk, Expected Shortfall, Markowitz optimization, Monte Carlo projection, and stress testing "
         "for a single portfolio.",
-    meta=f"Prepared {datetime.now().strftime('%d %b %Y &middot; %H:%M')} &middot; Simulation for professional use "
+    meta=f"Simulation for professional use "
          
 )
 
