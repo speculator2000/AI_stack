@@ -935,6 +935,8 @@ with st.sidebar:
             except Exception as e:
                 st.error(f"❌ Unexpected Error: {str(e)}")
                 logger.exception("Unhandled exception in analysis")
+                
+    st.sidebar.caption("ⓒ Franklin Chidi (FC) - MIT License")
 
 # --- Dashboard Display ---
 if 'analyzer' in st.session_state:
