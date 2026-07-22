@@ -41,7 +41,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 # --- 1. Configuration ---
-st.set_page_config(page_title="DART AI", page_icon="🧠", layout="wide")
+st.set_page_config(page_title="DART - AI Model", page_icon="🧠", layout="wide")
 
 # =============================================================================
 # DESIGN SYSTEM
