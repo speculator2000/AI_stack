@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-AI Quant Platform & DART (Deep Adaptive Reinforcement Trader) - Streamlit Prototype
+DART (Deep Adaptive Reinforcement Trader) AI - Streamlit Prototype
 
 This is a working, integrated prototype synthesizing concepts from advanced trading systems.
 It's designed to be educational and a foundation for further development.
@@ -41,7 +41,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 # --- 1. Configuration ---
-st.set_page_config(page_title="AI Quant Platform + DART", page_icon="🧠", layout="wide")
+st.set_page_config(page_title="DART AI", page_icon="🧠", layout="wide")
 
 # =============================================================================
 # DESIGN SYSTEM
@@ -294,7 +294,7 @@ inject_design_system()
 
 masthead(
     eyebrow="Research Desk &middot; Reinforcement Learning",
-    title="AI Quant Platform &amp; DART",
+    title="DART AI",
     dek="Deep Adaptive Reinforcement Trader with ensemble learning and institutional risk management",
 )
 
