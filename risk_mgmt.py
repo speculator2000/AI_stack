@@ -776,7 +776,7 @@ masthead(
     dek="Value at Risk, Expected Shortfall, Markowitz optimization, Monte Carlo projection, and stress testing "
         "for a single portfolio.",
     meta=f"Prepared {datetime.now().strftime('%d %b %Y &middot; %H:%M')} &middot; Simulation for professional use "
-         #f"professional use",
+         
 )
 
 # Sidebar configuration
@@ -853,6 +853,7 @@ with st.sidebar:
             st.success("Risk analysis complete!")
 
     st.sidebar.caption("ⓒ Franklin Chidi (FC) - MIT License")
+    meta=f"Prepared {datetime.now().strftime('%d %b %Y &middot; %H:%M')} &middot;
 
 # --- 4. Dashboard Display ---
 if 'risk_manager' in st.session_state:
