@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Market Analysis Depth Model - Streamlit Dashboard (v2)
+Market Analysis Depth AI Model - Streamlit Dashboard (v2)
 
 This is a complete, working prototype synthesizing concepts from advanced
 market depth analysis systems (bybit-depth, DepthSim, and HFT research).
@@ -323,7 +323,7 @@ inject_design_system()
 
 masthead(
     eyebrow="Market Microstructure Desk",
-    title="Market Analysis Depth Model",
+    title="Market Analysis Depth AI Model",
     dek="Professional order book depth analysis with simulated L2/L3 market data",
 )
 
