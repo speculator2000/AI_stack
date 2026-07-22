@@ -298,7 +298,7 @@ inject_design_system()
 
 masthead(
     eyebrow="Research Desk &middot; Reinforcement Learning",
-    title="DART - AI model",
+    title="DART - AI Model",
     dek="Deep Adaptive Reinforcement Trader with ensemble learning and institutional risk management",
 )
 
