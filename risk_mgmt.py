@@ -856,7 +856,6 @@ with st.sidebar:
             st.success("Risk analysis complete!")
 
     st.sidebar.caption("ⓒ Franklin Chidi (FC) - MIT License")
-    st.sidebar.caption(f"Refreshed: {datetime.now().strftime('%d %b %Y &middot; %H:%M')}")
     st.sidebar.caption(f"Updated: {Eastern_time.strftime('%Y-%m-%d at %-I:%M %p (Eastern)')}")
 
 # --- 4. Dashboard Display ---
