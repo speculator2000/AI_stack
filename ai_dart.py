@@ -37,6 +37,9 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 import warnings
+from zoneinfo import ZoneInfo
+
+Eastern_time = datetime.now(ZoneInfo("America/New_York"))
 
 warnings.filterwarnings('ignore')
 
