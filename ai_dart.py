@@ -714,7 +714,7 @@ with st.sidebar:
             st.session_state['backtest_results'] = run_backtest(ai_system, data)
 
     st.caption("ⓒ Franklin Chidi (FC) - MIT License")
-    st.caption(f"Data Updated: {Eastern_time.strftime('%Y-%m-%d at %-I:%M %p (Eastern)')}")
+    st.caption(f"Updated: {Eastern_time.strftime('%Y-%m-%d at %-I:%M %p (Eastern)')}")
 
 
 # --- 9. Dashboard Display ---
