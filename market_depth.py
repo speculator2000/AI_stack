@@ -40,7 +40,9 @@ import warnings
 import logging
 from io import StringIO
 import csv
+from zoneinfo import ZoneInfo
 
+Eastern_time = datetime.now(ZoneInfo("America/New_York"))
 warnings.filterwarnings('ignore')
 
 # Configure logging
@@ -937,6 +939,7 @@ with st.sidebar:
                 logger.exception("Unhandled exception in analysis")
                 
     st.sidebar.caption("ⓒ Franklin Chidi (FC) - MIT License")
+    st.sidebar.caption(f"Updated: {Eastern_time.strftime('%Y-%m-%d at %-I:%M %p (Eastern)')}")
 
 # --- Dashboard Display ---
 if 'analyzer' in st.session_state:
